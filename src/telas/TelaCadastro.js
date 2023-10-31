@@ -1,10 +1,31 @@
 
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Alert} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useState } from 'react';
+import firebase from '../../FireBase';
+import {useNavigation} from '@react-navigation/native';
 
 export default function App() {
     const [VerSenha, setVerSenha]= useState(true)
+    const [Email, setEmail]= useState('')
+    const [Senha, setSenha]= useState('')
+    const [ConfirmSenha, setConfirmSenha]= useState('')
+
+    const navigation = useNavigation();
+    
+    async function cadastrar(){
+      await firebase.auth().createUserWithEmailAndPassword(Email,Senha)
+      .then((value)=> {
+        navigation.navigate("Login")
+        setEmail('')
+        setSenha('')
+      })
+      .catch((error)=>{
+        Alert.alert("Erro", "Confira seus dados")
+      })
+    }
+
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -15,19 +36,19 @@ export default function App() {
       <Animatable.View animation={'fadeInUp'} style={styles.containerForm}>
         
         <Text style={styles.title}>Email</Text>
-        <TextInput placeholder='Digite um email...' style={styles.input}/>
+        <TextInput  placeholder='Digite um email...' style={styles.input} onChangeText={(text)=> setEmail(text)}/>
 
         <Text style={styles.title}>Senha</Text>
-        <TextInput  secureTextEntry={VerSenha} placeholder='Sua senha' style={styles.input}/>
+        <TextInput  secureTextEntry={VerSenha} placeholder='Sua senha' style={styles.input} onChangeText={(text)=> setSenha(text)}/>
 
         <Text style={styles.title}>Confirme a sua senha</Text>
-        <TextInput  secureTextEntry={VerSenha}  placeholder='Confirmar senha' style={styles.input}/>
+        <TextInput  secureTextEntry={VerSenha}  placeholder='Confirmar senha' style={styles.input} onChangeText={(text)=> setConfirmSenha(text)}/>
 
         <TouchableOpacity onPress={()=> setVerSenha(!VerSenha)}>
           <Text style = {styles.textVerSenha} >Ver Senha</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botao}>
+        <TouchableOpacity style={styles.botao} onPress={() => cadastrar()}>
           <Text style={[styles.RegistrarText, {color: '#fff'}]}>Cadastrar</Text>
         </TouchableOpacity>
 

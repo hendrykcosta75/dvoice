@@ -3,11 +3,27 @@ import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from
 import { useState } from 'react';
 import * as Animatable from 'react-native-animatable';
 import {useNavigation} from '@react-navigation/native';
+import firebase from '../../FireBase';
 
 
 export default function App() {
   const [VerSenha, setVerSenha]= useState(true)
+  const [Email, setEmail]= useState('')
+  const [Senha, setSenha]= useState('')
+
   const navigation = useNavigation();
+
+  async function login(){
+    await firebase.auth().signInWithEmailAndPassword(Email,Senha)
+    .then((value)=> {
+      navigation.navigate("Conversor")
+      setEmail('')
+      setSenha('')
+    })
+    .catch((error)=>{
+      Alert.alert("Erro", "Email ou senha incorreta!")
+    })
+  }
   return (
     <SafeAreaView style={styles.container}>
 
@@ -18,17 +34,17 @@ export default function App() {
       <Animatable.View animation={'fadeInUp'} style={styles.containerForm}>
         
         <Text style={styles.title}>Email</Text>
-        <TextInput placeholder='Digite um email...' style={styles.input}/>
+        <TextInput placeholder='Digite um email...' style={styles.input} onChangeText={(text)=> setEmail(text)}/>
 
         <Text style={styles.title}>Senha</Text>
 
-        <TextInput secureTextEntry={VerSenha} placeholder='Sua senha' style={styles.input}/>
+        <TextInput secureTextEntry={VerSenha} placeholder='Sua senha' style={styles.input} onChangeText={(text)=> setSenha(text)}/>
        
         <TouchableOpacity onPress={()=> setVerSenha(!VerSenha)}>
           <Text style = {styles.textVerSenha} >Ver Senha</Text>
         </TouchableOpacity>
        
-        <TouchableOpacity style={styles.botao}>
+        <TouchableOpacity style={styles.botao} onPress={() => login()}>
           <Text style={[styles.RegistrarText, {color: '#fff'}]}>Acessar</Text>
         </TouchableOpacity>
 
