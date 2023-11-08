@@ -1,5 +1,5 @@
 
-import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Alert} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, Alert, StatusBar} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { useState } from 'react';
 import firebase from '../../FireBase';
@@ -14,42 +14,56 @@ export default function App() {
     const navigation = useNavigation();
     
     async function cadastrar(){
-      await firebase.auth().createUserWithEmailAndPassword(Email,Senha)
+      if(Senha === ConfirmSenha && Senha!== "" && ConfirmSenha !== "" && Email != ""){
+        await firebase.auth().createUserWithEmailAndPassword(Email,Senha)
       .then((value)=> {
         navigation.navigate("Login")
         setEmail('')
         setSenha('')
       })
       .catch((error)=>{
-        Alert.alert("Erro", "Confira seus dados")
+        if(error.code === 'auth/weak-password'){
+          Alert.alert('Password', 'Your password needs to be at least 6 characters long')
+        }
+        if(error.code === 'auth/invalid-email'){
+          Alert.alert('Email', 'Invalid email!')
+        }
+        if(error.code === 'auth/email-already-in-use'){
+          Alert.alert("Email", "Your email address has already been registered!")
+        }
       })
-    }
+    } else if(Email === ""|| Senha === ""|| ConfirmSenha == ""){
+      Alert.alert('Erro', 'Check if the data was entered and try again')
+    }else{
+      Alert.alert('Erro', 'Passwords must be the same')    }
 
+
+     }
+      
 
   return (
     <SafeAreaView style={styles.container}>
-
       <Animatable.View animation='fadeInLeft' delay={500} style={styles.containerBemVindo}>
-        <Text style={styles.mensagem}>Cadastro</Text>
+        <Text style={styles.mensagem}>Sign Up</Text>
       </Animatable.View>
       
       <Animatable.View animation={'fadeInUp'} style={styles.containerForm}>
         
         <Text style={styles.title}>Email</Text>
-        <TextInput  placeholder='Digite um email...' style={styles.input} onChangeText={(text)=> setEmail(text)}/>
+        <TextInput  placeholder='Email' style={styles.input} onChangeText={(text)=> setEmail(text)}/>
 
-        <Text style={styles.title}>Senha</Text>
-        <TextInput  secureTextEntry={VerSenha} placeholder='Sua senha' style={styles.input} onChangeText={(text)=> setSenha(text)}/>
+        <Text style={styles.title}>Password</Text>
+        <TextInput  secureTextEntry={VerSenha} placeholder='Your password' style={styles.input} onChangeText={(text)=> setSenha(text)}/>
 
-        <Text style={styles.title}>Confirme a sua senha</Text>
-        <TextInput  secureTextEntry={VerSenha}  placeholder='Confirmar senha' style={styles.input} onChangeText={(text)=> setConfirmSenha(text)}/>
+        <Text style={styles.title}>Verify Password</Text>
+        <TextInput  secureTextEntry={VerSenha}  placeholder='Verify Password' style={styles.input} onChangeText={(text)=> setConfirmSenha(text)}/>
 
         <TouchableOpacity onPress={()=> setVerSenha(!VerSenha)}>
-          <Text style = {styles.textVerSenha} >Ver Senha</Text>
+          <Text style = {styles.textVerSenha} >Show</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.botao} onPress={() => cadastrar()}>
-          <Text style={[styles.RegistrarText, {color: '#fff'}]}>Cadastrar</Text>
+          <Text style={[styles.RegistrarText, {color: '#fff'}]}>Create your account</Text>
         </TouchableOpacity>
 
       </Animatable.View>
@@ -57,12 +71,12 @@ export default function App() {
     </SafeAreaView>
   );
 }
-//componetizar os imputs e botões
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ff66c4',
   },
+  
   containerBemVindo:{
     marginTop: '14%',
     marginBottom: '8%',

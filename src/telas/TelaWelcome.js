@@ -17,10 +17,10 @@ export default function App() {
             resizeMode='contain'/>
         </View>
         <Animatable.View delay={600} animation={'fadeInUp'} style={styles.containerForm}>
-            <Text style={styles.title} >Seja Bem Vindo! Leia e escute seus textos em qualquer lugar!</Text>
-            <Text style={styles.text} >Faça o login para começar</Text>
+            <Text style={styles.title} >Welcome! Read and listen to your texts anywhere!</Text>
+            <Text style={styles.text} >Log in to get started</Text>
            <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Login')}>
-          <Text style={styles.buttonText}> Acessar </Text>
+          <Text style={styles.buttonText}> Access </Text>
         </TouchableOpacity>
         </Animatable.View>
 
