@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@react-native-voice/voice": "github:react-native-voice/voice",
-    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/bottom-tabs": "^6.5.13",
+    "@react-navigation/drawer": "^6.6.8",
+    "@react-navigation/native": "^6.1.11",
     "@react-navigation/native-stack": "^6.9.16",
     "expo": "~49.0.13",
     "expo-speech": "~11.3.0",

@@ -23,19 +23,19 @@ export default function App() {
       })
       .catch((error)=>{
         if(error.code === 'auth/weak-password'){
-          Alert.alert('Password', 'Your password needs to be at least 6 characters long')
+          Alert.alert('Password', 'Sua senha precisa ter pelo menos 6 caracteres')
         }
         if(error.code === 'auth/invalid-email'){
-          Alert.alert('Email', 'Invalid email!')
+          Alert.alert('Email', 'Email inválido')
         }
         if(error.code === 'auth/email-already-in-use'){
-          Alert.alert("Email", "Your email address has already been registered!")
+          Alert.alert("Email", "Seu email já foi cadastrado!")
         }
       })
     } else if(Email === ""|| Senha === ""|| ConfirmSenha == ""){
-      Alert.alert('Erro', 'Check if the data was entered and try again')
+      Alert.alert('Erro', 'Verifique se os dados foram inseridos e tente novamente!')
     }else{
-      Alert.alert('Erro', 'Passwords must be the same')    }
+      Alert.alert('Erro', 'As senhas devem ser iguais!')    }
 
 
      }

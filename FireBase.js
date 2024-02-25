@@ -2,13 +2,12 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB84sdGVpYEJWGxxK790__B9tioJixWXjY",
-    authDomain: "autenticacaodvoice.firebaseapp.com",
-    projectId: "autenticacaodvoice",
-    storageBucket: "autenticacaodvoice.appspot.com",
-    messagingSenderId: "885343269960",
-    appId: "1:885343269960:web:047187a43960923089d47d",
-    measurementId: "G-5S3RGSJBPR"
+    apiKey: "AIzaSyBV9qZRYgmjgXZd4InMAHPa6xeA1MXUj5k",
+    authDomain: "autenticacao-usuario-c6eb5.firebaseapp.com",
+    projectId: "autenticacao-usuario-c6eb5",
+    storageBucket: "autenticacao-usuario-c6eb5.appspot.com",
+    messagingSenderId: "930821960907",
+    appId: "1:930821960907:web:df5ccf4b5b274b09b6974e"
   };
 
   if(!firebase.apps.length){

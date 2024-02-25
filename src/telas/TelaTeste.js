@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View,  TextInput, Alert, TouchableOpacity} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View,  TextInput, Alert, TouchableOpacity, Image} from 'react-native';
 import{Feather, Ionicons} from 'react-native-vector-icons';
 import * as Speech from 'expo-speech';
 import firebase from '../../FireBase';
@@ -12,7 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
-import { getDatabase, ref, set, push } from "firebase/database";
+import { getDatabase, ref, set, push, onValue } from "firebase/database";
 
 
 const db = getDatabase();
@@ -22,12 +22,33 @@ export default function App() {
 
     const usuario = firebase.auth().currentUser.email;
     const [opcao, setOpcao]= useState(false);
-    const [texto, setTexto] = useState('Digite por favor')
+    
     const navigation = useNavigation();
     const options = {
       voiceID: 'com.apple.ttsbundle.Samantha-compact',
       rate: 0.6,
     };
+
+    const user = firebase.auth().currentUser;
+    const path = `users/${user.uid}/palavras`;
+    const [data, setData] = useState([]);
+  
+    useEffect(() => {
+      const dbRef = ref(db, path);
+      const fetchData = onValue(dbRef, (snapshot) => {
+        const val = snapshot.val();
+        if (val) {
+          const textos = Object.values(val).map(item => item.texto);
+          setData(textos);
+        } else {
+          setData([]);
+        }
+      });
+  
+      return () => {
+        fetchData();
+      };
+    }, []);
 
    if(opcao === true){
       firebase.auth().signOut(usuario)
@@ -50,12 +71,8 @@ export default function App() {
       
     }
     
-    function speak(){
-        Speech.speak(texto,options)
-        const user = firebase.auth().currentUser;
-        push(ref(db, `users/${user.uid}/palavras`), {
-          texto,
-        })
+    function speak(text){
+        Speech.speak(text,options)
     }
 
     
@@ -80,16 +97,25 @@ export default function App() {
             resizeMode='contain'/>
         </View>
 
-      <TextInput
-      style={styles.input}
-      onChangeText={e=> e ===''?setTexto('Digite por favor'): setTexto(e)}
-      placeholder='Digite alguma coisa'
-      placeholderTextColor={'#ff66c4'}
-      color = {'#ff66c4'} />
-
-        <TouchableOpacity style={styles.botao} onPress={() => speak() }>
-          <Text style={styles.RegistrarText}>Falar</Text>
-        </TouchableOpacity>
+        <Text style={[styles.textUsuario, { color: '#ff66c4', fontSize: 30}]}>Histórico</Text>
+      
+        <View style={[styles.Historicocontainer, { height: Math.max(50, data.length * 44) }]}>
+            {data.length > 0 ? (
+                    data.map((texto, index) => (
+                   
+                    <View style={styles.itemContainer} key={index}>
+                        <Text style={styles.textUsuario} key={index}>{texto}</Text>
+                        <TouchableOpacity style={styles.image} onPress={() => speak(texto)}>
+                            <Image source={require('../../assets/volume.png')} style={[styles.image, { tintColor: '#ff66c4' }]} />
+                        </TouchableOpacity>
+                    </View>
+    
+                    ))
+                ) : (
+                    <Text style={styles.textUsuario}>Sem historico</Text>
+                )}
+        </View>
+   
      
     </SafeAreaView>
 
@@ -140,9 +166,8 @@ const styles = StyleSheet.create({
     marginRight: -15,
     marginTop: 10
   },
-  input:{
+  Historicocontainer:{
     width: '90%',
-    height: '9%',
     padding: 12,
     borderWidth: 3,
     borderColor:'#ff66c4',
@@ -169,5 +194,15 @@ const styles = StyleSheet.create({
   tabNavigatorContainer: {
     flex: 1, 
     width: '100%', 
+  },
+  image: {
+    width: 20,
+    height: 20,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10, // Espaço entre os itens
   }
 });
